@@ -6,6 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.flow.launchIn
@@ -33,22 +34,21 @@ class MainViewModel: ViewModel() {
     }
 
     private fun collectFlow(){
-        countDownFlow.onEach {
-            println(it)
-        }.launchIn(viewModelScope)
-        
+        val flow1 = flow<Int> {
+            emit(1)
+            delay(500L)
+            emit(2)
+        }
         viewModelScope.launch() {
-            val reduceResult = countDownFlow
-                /*.count {
-                    it % 2 == 0
-                }*/
-                /*.reduce { accumulator, value ->
-                    accumulator + value
-                }*/
-                .fold(100 ){ accumulator, value ->
-                    accumulator + value
+            flow1.flatMapConcat {value ->
+                flow {
+                    emit(value + 1)
+                    delay(500L)
+                    emit(value + 2)
                 }
-            println("The amount of even numbers is $reduceResult")
+            }.collect{value ->
+                println("The value is $value")
+            }
         }
     }
 }
