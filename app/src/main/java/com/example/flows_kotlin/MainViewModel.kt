@@ -3,6 +3,7 @@ package com.example.flows_kotlin
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.filter
@@ -34,18 +35,10 @@ class MainViewModel: ViewModel() {
     }
 
     private fun collectFlow(){
-        val flow1 = flow<Int> {
-            emit(1)
-            delay(500L)
-            emit(2)
-        }
+        val flow1 = (1..5).asFlow()
         viewModelScope.launch() {
-            flow1.flatMapConcat {value ->
-                flow {
-                    emit(value + 1)
-                    delay(500L)
-                    emit(value + 2)
-                }
+            flow1.flatMapConcat {id ->
+                getRecipieById(id)
             }.collect{value ->
                 println("The value is $value")
             }
