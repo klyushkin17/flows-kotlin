@@ -2,9 +2,12 @@ package com.example.flows_kotlin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapConcat
@@ -35,13 +38,25 @@ class MainViewModel: ViewModel() {
     }
 
     private fun collectFlow(){
-        val flow1 = (1..5).asFlow()
-        viewModelScope.launch() {
-            flow1.flatMapConcat {id ->
-                getRecipieById(id)
-            }.collect{value ->
-                println("The value is $value")
+        val flow = flow {
+            delay(1000L)
+            emit("Appetizer")
+            delay(2000L)
+            emit("Main dish")
+            delay(500L)
+            emit("Dessert")
+        }
+        viewModelScope.launch {
+            flow.onEach{
+                println("$it is delivered")
             }
+                //.buffer()
+                //.conflate()
+                .collect {
+                    println("Now eating $it")
+                    delay(2000L)
+                    println("Finished to eating $it")
+                }
         }
     }
 }
