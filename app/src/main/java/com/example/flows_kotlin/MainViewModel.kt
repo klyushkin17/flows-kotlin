@@ -40,10 +40,12 @@ class MainViewModel: ViewModel() {
     /*private val _stateFlow = MutableStateFlow(0)
     val stateFlow = _stateFlow.asStateFlow()*/
 
-    private val _sharedFlow = MutableSharedFlow<Int>()
+    private val _sharedFlow = MutableSharedFlow<Int>(replay = 6)
     val sharedFlow = _sharedFlow.asSharedFlow()
 
     init{
+        sqareNumber(3)
+
         //collectFlow()
         viewModelScope.launch {
             sharedFlow.collect{
@@ -59,7 +61,6 @@ class MainViewModel: ViewModel() {
             }
         }
 
-        sqareNumber(3)
     }
 
     fun sqareNumber(number: Int) {
