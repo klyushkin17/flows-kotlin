@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collectLatest
@@ -35,17 +37,41 @@ class MainViewModel: ViewModel() {
         }
     }*/
 
-    private val _stateFlow = MutableStateFlow(0)
-    val stateFlow = _stateFlow.asStateFlow()
+    /*private val _stateFlow = MutableStateFlow(0)
+    val stateFlow = _stateFlow.asStateFlow()*/
 
-    /*init{
-        collectFlow()
-    }*/
+    private val _sharedFlow = MutableSharedFlow<Int>()
+    val sharedFlow = _sharedFlow.asSharedFlow()
 
-    fun incrementCounter() {
-        _stateFlow.value += 1
+    init{
+        //collectFlow()
+        viewModelScope.launch {
+            sharedFlow.collect{
+                delay(2000L)
+                println("FIRST FLOW: The received number is $it")
+            }
+        }
+
+        viewModelScope.launch {
+            sharedFlow.collect{
+                delay(3000L)
+                println("SECOND FLOW: The received number is $it")
+            }
+        }
+
+        sqareNumber(3)
     }
 
+    fun sqareNumber(number: Int) {
+        viewModelScope.launch {
+            _sharedFlow.emit(number * number)
+        }
+    }
+
+    /*fun incrementCounter() {
+        _stateFlow.value += 1
+    }
+*/
     /*private fun collectFlow(){
         val flow = flow {
             delay(1000L)

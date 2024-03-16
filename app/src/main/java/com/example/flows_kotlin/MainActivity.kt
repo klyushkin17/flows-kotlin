@@ -31,15 +31,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch{
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                viewModel.stateFlow.collectLatest { number ->
-                    binding.tvCounter.text = number.toString()
-                }
-            }
-        }
-
-        /*setContent {
+        setContent {
             FlowskotlinTheme {
                 val viewModel = viewModel<MainViewModel>()
                 val count = viewModel.stateFlow.collectAsState(initial = 10)
@@ -50,6 +42,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }*/
+        }
     }
 }
