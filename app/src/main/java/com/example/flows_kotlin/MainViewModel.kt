@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.conflate
@@ -21,7 +23,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel: ViewModel() {
 
-    val countDownFlow = flow<Int> {
+    /*val countDownFlow = flow<Int> {
         val staringValue = 10
         var currentValue = staringValue
         emit(currentValue)
@@ -31,13 +33,20 @@ class MainViewModel: ViewModel() {
             currentValue--
             emit(currentValue)
         }
-    }
+    }*/
 
-    init{
+    private val _stateFlow = MutableStateFlow(0)
+    val stateFlow = _stateFlow.asStateFlow()
+
+    /*init{
         collectFlow()
+    }*/
+
+    fun incrementCounter() {
+        _stateFlow.value += 1
     }
 
-    private fun collectFlow(){
+    /*private fun collectFlow(){
         val flow = flow {
             delay(1000L)
             emit("Appetizer")
@@ -58,5 +67,5 @@ class MainViewModel: ViewModel() {
                     println("Finished to eating $it")
                 }
         }
-    }
+    }*/
 }
